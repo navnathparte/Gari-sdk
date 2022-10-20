@@ -7,7 +7,7 @@ import {
   } from 'typeorm';
   
   @Entity()
-  export class Wallet {
+  export class RegisterWallet {
     @PrimaryGeneratedColumn('uuid')
     id: string;
   
@@ -15,30 +15,19 @@ import {
       unique: true,
       nullable: false,
     })
-    userId: string;
-  
-    @Column({
-      nullable: false,
-    })
     clientId: string;
   
+    //if we have client id why to save appname
     @Column({
       nullable: false,
     })
     appName: string;
   
-    // will save app publick key or userpublic key
     @Column({ unique: true, nullable: false })
     publicKey: string;
   
-    @Column({ unique: true, nullable: false })
-    tokenAssociatedAccount: string;
-  
     @Column({ nullable: true })
     encryptedPrivateKey: string;
-  
-    @Column({ default: 0, type: 'bigint' })
-    balance: string;
   
     @CreateDateColumn({
       type: 'timestamptz',

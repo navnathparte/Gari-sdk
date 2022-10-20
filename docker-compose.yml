@@ -1,0 +1,11 @@
+version: '3'
+services:
+  postgressGariDatabase:
+    image: 'postgres:11'
+    container_name: 'postgressGariSdkDatabase'
+    ports:
+      - '5437:5437'
+    environment:
+      POSTGRES_DB: devGariSdkWallet
+      POSTGRES_USER: devGariSdk
+      POSTGRES_PASSWORD: 12345
