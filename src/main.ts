@@ -1,8 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
-const { PORT } = process.env;
+import constants from './constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +17,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(PORT);
-  console.log('server listen on port', PORT);
+  await app.listen(constants.PORT);
+  console.log('server listen on port', constants.PORT);
 }
 bootstrap();

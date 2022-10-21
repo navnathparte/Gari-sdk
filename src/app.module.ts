@@ -4,6 +4,9 @@ import { RegisterWallet } from './wallet/entities/registerWallet.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import constants from './constants';
+
+console.log('constants -- ', constants);
 
 @Module({
   imports: [
@@ -12,11 +15,11 @@ import { AppService } from './app.service';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_LOCAL_HOST,
-      port: parseInt(process.env.DB_PORT),
+      host: constants.DB_LOCAL_HOST,
+      port: parseInt(constants.DB_PORT),
       username: 'postgres',
-      password: process.env.DB_LOCAL_PASSWORD,
-      database: process.env.DB_LOCAL_DATABASE,
+      password: constants.DB_LOCAL_PASSWORD,
+      database: constants.DB_LOCAL_DATABASE,
       entities: [RegisterWallet],
       synchronize: true,
     }),
