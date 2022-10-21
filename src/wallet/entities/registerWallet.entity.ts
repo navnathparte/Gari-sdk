@@ -17,7 +17,6 @@ import {
     })
     clientId: string;
   
-    //if we have client id why to save appname
     @Column({
       nullable: false,
     })
