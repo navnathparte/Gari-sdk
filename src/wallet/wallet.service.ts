@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import * as web3 from '@solana/web3.js';
 
 import * as splToken from '@solana/spl-token';
 
@@ -16,6 +15,7 @@ import {
 } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
 import { RegisterWallet } from './entities/registerWallet.entity';
+import { Wallet } from './entities/wallet.entity';
 // import { transactions } from 'src/wallet/entity/transactions.entity';
 
 const crypto = require('crypto');
@@ -38,6 +38,31 @@ export class WalletService {
     });
     return data;
   }
+
+  async walletDbTRansaction(walletData) {
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let transactionResponse;
+    try {
+      await queryRunner.manager.save(Wallet, { ...walletData });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async deleteWallet(request) {
+    return await this.registerWalletRepository.delete(request);
+  }
+
+  // updateTransctions(filter, request) {
+  //   return this.signedTransactions.update({ ...filter }, request);
+  // }
 
   // async connectWallet(wallet) {
   //   let data = await this.appWalletRepository.save(wallet);

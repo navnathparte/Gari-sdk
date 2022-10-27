@@ -1,6 +1,6 @@
 import {
   Controller,
-  Get,
+  Req,
   Post,
   Body,
 } from '@nestjs/common';
@@ -10,12 +10,14 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 
 import { keyBy, filter, get } from 'lodash';
+import { CreateWalletDto } from './dto/create-wallet.dto';
+import { SolanaService } from './solana/solana.service';
 
 @Controller('app-wallet')
 export class WalletController {
   constructor(
     private readonly walletService: WalletService,
-    // private readonly solanaNftService: SolanaNftService,
+    private readonly solanaService: SolanaService,
     // @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -49,6 +51,52 @@ export class WalletController {
         error: error.message,
         message: 'Error',
       };
+    }
+  }
+
+  @Post('craete')
+  async createWallet(@Body() body:CreateWalletDto, @Req() req) {
+    try {
+      const userId = req.decoded._id;
+      const { publicKey } = body;
+
+      const associatedAccount =
+        await this.solanaService.createAssociatedAccount(publicKey);
+      
+      const walletData = {
+        publicKey,
+        userId,
+        tokenAssociatedAccountpublickey: associatedAccount.toString(),
+        balance: 0,
+        status:"draft",
+      }
+
+      const draftTransaction = await this.walletService.walletDbTRansaction(walletData);
+
+      const signature = await this.solanaService.assocaiatedAccountTransaction(associatedAccount, publicKey)
+        .catch(async (error) => {
+          this.walletService.deleteWallet({
+            userId,
+          })
+
+          console.log("Create Wallet Failed");
+          throw new Error('Create Wallet Failed');
+          
+        })  
+      
+        // await this.walletService.updateTransctions(
+        //   {
+        //     id: drafttransaction.id,
+        //   },
+        //   {
+        //     status: ETransactionStatus.PENDING,
+        //     signature: signature,
+        //   },
+        // );
+
+    } catch (error) {
+      console.log(error);
+      
     }
   }
 
